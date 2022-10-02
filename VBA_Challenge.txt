@@ -1,0 +1,83 @@
+Sub Stocks()
+
+'Set variable for ticker name
+Dim Ticker As String
+'Set variable for Yearly Change
+Dim yc As Double
+'Set variable for Percent Change
+Dim pc As Double
+'Set variable for Total Volume
+'Dim tv As Long - Thank you Becky for advising to not assign any value to this variable!
+'Set variable for Worksheet
+Dim ws As Worksheet
+'Set variable for last row
+Dim lr As Long
+'Set variable for Count
+Dim Count As Long
+'Set variable for First Ticker
+Dim ft As Long
+'Set i as Long (debugging)
+Dim i As Long
+
+
+'Scroll through worksheets and activate in order (found online geeksrepos.com)
+For Each ws In ThisWorkbook.Worksheets
+    Worksheets(ws.Name).Activate
+
+    'Navigate to last Row in Column A on current worksheet
+    lr = Cells(Rows.Count, 1).End(xlUp).Row
+
+    'Create summary table for results of analysis
+    Cells(1, 9).Value = "Ticker"
+    Cells(1, 10).Value = "Yearly Change"
+    Cells(1, 11).Value = "Percent Change"
+    Cells(1, 12).Value = "Total Volume"
+
+    'Start count at 0
+    Count = 1
+     'Set total volume as 0
+    tv = 0
+    'Create loop to check tickers, assigning First Ticker as 2
+    ft = 2
+    For i = 2 To lr
+   
+        'Calculate total stock volume
+        tv = tv + Cells(i, 7).Value
+        
+        'Check to see if we are on the same ticker
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+        
+            'Add 1 to count if new ticker found
+            Count = Count + 1
+        
+            'Calculate yearly change
+            yc = Cells(i, 6).Value - Cells(ft, 3).Value
+        
+            'Calculate percent change
+            pc = yc / Cells(ft, 3).Value
+    
+            'Populate Summary table
+            Cells(Count, 9).Value = Cells(i, 1).Value
+            Cells(Count, 10).Value = yc
+            Cells(Count, 11).Value = pc
+            Cells(Count, 12).Value = tv
+        
+            'Conditional formatting for Yearly Change
+        
+            If yc >= 0 Then
+                Cells(Count, 10).Interior.ColorIndex = 4
+            Else
+                Cells(Count, 10).Interior.ColorIndex = 3
+            End If
+        
+            'Reset ft and tv
+            ft = i + 1
+            tv = 0
+        End If
+        
+    Next i
+Next
+
+    
+
+End Sub
